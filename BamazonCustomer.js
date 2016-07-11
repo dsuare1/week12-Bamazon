@@ -9,3 +9,15 @@ var connection = mysql.createConnection({
 	database: "BamazonDB"
 });
 
+connection.connect(function(err) {
+    if (err) throw err;
+    console.log("connected as id " + connection.threadId);
+})
+
+connection.query('SELECT * FROM Products', function(err, res) {
+    if (err) throw err;
+    
+    for (var i = 0; i < res.length; i++) {
+    	console.log("ID: " + res[i].ID + " || Product Name: " + res[i].ProductName + " || Price: " + res[i].Price);
+    }
+});
