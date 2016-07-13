@@ -1,5 +1,23 @@
 var inquirer = require("inquirer");
+var prompt = require("prompt");
 var mysql = require("mysql");
+
+var schema = {
+    properties: {
+        productID: {
+            description: "Enter ID of product for you want to update StockQuantity",
+            pattern: /[1-9|10]/,
+            message: "ProductID must be only numbers 1 - 10",
+            required: true
+        },
+        qtyToAdd: {
+            description: "Enter quantity of stock to add",
+            pattern: /[1-9|10]/,
+            message: "ProductID must be only numbers 1 - 10",
+            required: true
+        }
+    }
+};
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -30,9 +48,9 @@ function start() {
         } else if (choice.command == "Add New Product") {
             addNewProduct();
         } else {
-        	console.log("Exiting...");
-        	// doesn't get out of the prompt ???
-        	return;
+            console.log("Exiting...");
+            // doesn't get out of the prompt ???
+            return;
         }
     });
 }
@@ -75,43 +93,19 @@ function viewLowInventory() {
     })
 }
 
-// ******************************************************************************************
-// not working
-// ******************************************************************************************
-
 function addToInventory() {
-    // inquirer.prompt([{
-    //     type: "list",
-    //     message: "Ok; do you need to see the current inventory to get the ID of the item you want to update?",
-    //     choices: ["Yes, I need to get the item's ID", "No, I know the item's ID"],
-    //     name: "update"
-    // }]).then(function(choice) {
-    //     if (choice.update == "Yes, I need to get the item's ID") {
-    //         viewAllProducts();
-    //         setTimeout(addToInventory, 2000);
-    //     } else {
-    inquirer.prompt([{
-        type: "input",
-        message: "Ok, enter the ID number of the product you want to update:",
-        name: "ID"
-    }, {
-        type: "input",
-        message: "How many would you like to add?",
-        name: "QTY"
-    }]).then(function(updateInfo) {
-        connection.query("UPDATE Products SET ? WHERE ?", [{StockQuantity: + updateInfo.QTY}, {ID: updateInfo.ID}],
-            function(err, res) {
-                console.log("\nSuccessfully added " + updateInfo.QTY + "unit(s) of product with ID of " + updateInfo.ID + " to inventory;\n\nDisplaying updated DataBase info...");
-                setTimeout(viewAllProducts, 2500);
-                setTimeout(start, 3000);
-            })
+    prompt.get(schema, function(err, result) {
+        var itemID = result.productID;
+        console.log("qtyToAdd: " + result.qtyToAdd);
+        connection.query("SELECT * FROM Products", function(err, resultAll) {
+            console.log(resultAll[itemID - 1].StockQuantity);
+            connection.query("UPDATE Products SET ? WHERE ?", [{ StockQuantity: parseInt(resultAll[itemID - 1].StockQuantity) + parseInt(result.qtyToAdd) }, { ID: itemID }], function(err, res) {
+                console.log("\nSuccessfully added " + result.qtyToAdd + " unit(s) of product with ID of " + itemID + " to inventory;\n\nDisplaying updated DataBase info...");
+                setTimeout(viewAllProducts, 2000);
+            });
+        })
     })
 }
-// })
-
-// }
-
-// ******************************************************************************************
 
 function addNewProduct() {
     inquirer.prompt([{

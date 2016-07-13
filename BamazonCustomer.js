@@ -36,9 +36,9 @@ function initialProductDisplay() {
     connection.query('SELECT * FROM Products', function(err, result) {
         if (err) throw err;
         console.log("\nWelcome to Bamazon!  Here's what we currently have to offer:");
-        console.log("================================================================================");
+        console.log("==========================================================================================");
         for (var i = 0; i < result.length; i++) {
-            console.log("--------------------------------------------------------------------------------");
+            console.log("------------------------------------------------------------------------------------------");
             console.log("ID: " + result[i].ID + " || Product Name: " + result[i].ProductName + " || Price: $" + result[i].Price.toFixed(2));
         }
         console.log("\n");
@@ -87,7 +87,7 @@ function promptForContinue() {
             setTimeout(userInput, 2500);
         } else if (cont.continue === "No, I'm finished.") {
             console.log("\n\nOk!  Thanks for your time :)");
-            // doesn't get out of the prompt ???
+            // doesn't get out of the inquirer prompt ???
             return;
         }
     });
