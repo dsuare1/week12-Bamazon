@@ -42,6 +42,7 @@ function initialProductDisplay() {
             console.log("ID: " + result[i].ID + " || Product Name: " + result[i].ProductName + " || Price: $" + result[i].Price.toFixed(2));
         }
         console.log("\n");
+        userInput();
     });
 };
 
@@ -49,7 +50,7 @@ function userInput() {
     prompt.get(schema, function(err, result) {
         // console.log("  The product you chose is: " + result.productID);
         // console.log("  The amount you'd like to purchase is: " + result.Quantity);
-        connection.query("SELECT * FROM Products WHERE ?", {id: result.productID},
+        connection.query("SELECT * FROM Products WHERE ?", { id: result.productID },
             function(err, specificItem) {
                 checkIfUserCanBuy(specificItem, result.Quantity);
             })
@@ -63,14 +64,29 @@ function checkIfUserCanBuy(item, qtyDesired) {
         setTimeout(initialProductDisplay, 1000);
         setTimeout(userInput, 1500);
     } else {
+        var deptName = item[0].DeptName;
+        console.log("foo: " + deptName);
         var totalWithoutTax = qtyDesired * item[0].Price;
         var totalWithTax = (totalWithoutTax * 0.0825) + totalWithoutTax;
         console.log("\n\nOk great!  Here's your order:\n\nYou want " + qtyDesired + " of " + item[0].ProductName + " at $" + item[0].Price.toFixed(2) + " a piece.\n");
         console.log("\nYour total cost is: \n" + "    (before tax): $" + totalWithoutTax.toFixed(2) + "\n    (after tax): $" + totalWithTax.toFixed(2) + "\n\n");
-        // update the DB
+        // update the Products Table in DB with new quantity for item
         connection.query("UPDATE Products SET ? WHERE ?", [{ StockQuantity: item[0].StockQuantity - qtyDesired }, { ID: item[0].ID }], function(err, res) {
             setTimeout(promptForContinue, 1000);
         })
+
+        // update the Departments Table in DB with sales earned for relevant department
+        connection.query("SELECT * FROM Departments", function(err, resultAll) {
+            var itemDept = "";
+            for (var i = 0; i < resultAll.length; i++) {
+                if (deptName == resultAll[i].DepartmentName) {
+                    itemDept = deptName;
+                }
+            }
+            connection.query("UPDATE Departments SET TotalSales = TotalSales + " + totalWithTax + " WHERE ?", { DepartmentName: itemDept }, function(err, res) {
+                    return;
+            });
+        });
     }
 }
 
@@ -95,4 +111,4 @@ function promptForContinue() {
 
 initialProductDisplay();
 
-setTimeout(userInput, 500);
+// setTimeout(userInput, 500);
