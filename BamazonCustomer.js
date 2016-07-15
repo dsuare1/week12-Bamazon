@@ -77,7 +77,7 @@ function calculateOverHeadCosts() {
 }
 
 function initialProductDisplay() {
-    connection.query('SELECT * FROM Products', function(err, result) {
+    connection.query("SELECT * FROM Products", function(err, result) {
         if (err) throw err;
         console.log("\nWelcome to Bamazon!  Here's what we currently have to offer:");
         console.log("==========================================================================================");
@@ -113,8 +113,7 @@ function checkIfUserCanBuy(item, qtyDesired) {
         console.log("\n\nOk great!  Here's your order:\n\nYou want " + qtyDesired + " of " + item[0].ProductName + " at $" + item[0].Price.toFixed(2) + " a piece.\n");
         console.log("\nYour total cost is: \n" + "    (before tax): $" + totalWithoutTax.toFixed(2) + "\n    (after tax): $" + totalWithTax.toFixed(2) + "\n\n");
         // update the Products Table in DB with new quantity for item
-        connection.query("UPDATE Products SET ? WHERE ?", [{ StockQuantity: item[0].StockQuantity - qtyDesired }, { ID: item[0].ID }], function(err, res) {
-        })
+        connection.query("UPDATE Products SET ? WHERE ?", [{ StockQuantity: item[0].StockQuantity - qtyDesired }, { ID: item[0].ID }], function(err, res) {})
 
         // update the Departments Table in DB with sales earned for relevant department
         connection.query("SELECT * FROM Departments", function(err, resultAll) {
