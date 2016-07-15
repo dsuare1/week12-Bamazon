@@ -96,9 +96,8 @@ function viewLowInventory() {
 function addToInventory() {
     prompt.get(schema, function(err, result) {
         var itemID = result.productID;
-        console.log("qtyToAdd: " + result.qtyToAdd);
         connection.query("SELECT * FROM Products", function(err, resultAll) {
-            console.log(resultAll[itemID - 1].StockQuantity);
+            // console.log(resultAll[itemID - 1].StockQuantity);
             connection.query("UPDATE Products SET ? WHERE ?", [{ StockQuantity: parseInt(resultAll[itemID - 1].StockQuantity) + parseInt(result.qtyToAdd) }, { ID: itemID }], function(err, res) {
                 console.log("\nSuccessfully added " + result.qtyToAdd + " unit(s) of product with ID of " + itemID + " to inventory;\n\nDisplaying updated DataBase info...");
                 setTimeout(viewAllProducts, 2000);
