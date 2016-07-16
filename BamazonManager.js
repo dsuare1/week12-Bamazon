@@ -13,7 +13,7 @@ var schema = {
         qtyToAdd: {
             description: "Enter quantity of stock to add",
             pattern: /^\d+$/,
-            message: "ProductID must be only numbers 1 - 10",
+            message: "Please enter a valid quantity",
             required: true
         }
     }
