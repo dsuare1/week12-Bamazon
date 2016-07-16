@@ -6,13 +6,13 @@ var schema = {
     properties: {
         productID: {
             description: "Enter ID of product for you want to update StockQuantity",
-            pattern: /[1-9|10]/,
-            message: "ProductID must be only numbers 1 - 10",
+            pattern: /^\d+$/,
+            message: "ProductID must be only numbers",
             required: true
         },
         qtyToAdd: {
             description: "Enter quantity of stock to add",
-            pattern: /[1-9|10]/,
+            pattern: /^\d+$/,
             message: "ProductID must be only numbers 1 - 10",
             required: true
         }
@@ -29,7 +29,6 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
-    // console.log("connected as id " + connection.threadId);
 });
 
 function start() {
@@ -49,7 +48,7 @@ function start() {
             addNewProduct();
         } else {
             console.log("Exiting...");
-            // doesn't get out of the prompt ???
+            connection.end();
             return;
         }
     });

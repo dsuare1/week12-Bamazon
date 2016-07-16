@@ -12,7 +12,6 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
-    // console.log("connected as id " + connection.threadId);
 });
 
 function startExec() {
@@ -28,7 +27,7 @@ function startExec() {
             createNewDepartment();
         } else {
             console.log("Exiting...");
-            // doesn't get out of the prompt ???
+            connection.end();
             return;
         }
     });

@@ -7,13 +7,13 @@ var schema = {
         productID: {
             description: "Please enter the ID of the product you'd like to purchase",
             pattern: /^\d+$/,
-            message: "ProductID must be only numbers 1 - 10",
+            message: "ProductID must be only numbers",
             required: true
         },
         Quantity: {
             description: "Ok, got it!  Please enter the amount of this product you'd like to purchase",
             pattern: /^\d+$/,
-            message: "Please enter a quantity between 1 and 50",
+            message: "Please enter a valid quantity",
             required: true
         }
     }
@@ -107,7 +107,6 @@ function checkIfUserCanBuy(item, qtyDesired) {
         setTimeout(userInput, 1500);
     } else {
         var deptName = item[0].DeptName;
-        console.log("foo: " + deptName);
         var totalWithoutTax = qtyDesired * item[0].Price;
         var totalWithTax = (totalWithoutTax * 0.0825) + totalWithoutTax;
         console.log("\n\nOk great!  Here's your order:\n\nYou want " + qtyDesired + " of " + item[0].ProductName + " at $" + item[0].Price.toFixed(2) + " a piece.\n");
@@ -128,8 +127,8 @@ function checkIfUserCanBuy(item, qtyDesired) {
             });
         });
         calculateOverHeadCosts();
+        promptForContinue();
     }
-    promptForContinue();
 }
 
 function promptForContinue() {
@@ -144,7 +143,7 @@ function promptForContinue() {
             setTimeout(initialProductDisplay, 2000);
         } else if (cont.continue === "No, I'm finished.") {
             console.log("\n\nOk!  Thanks for your time :)");
-            // doesn't get out of the inquirer prompt ???
+            connection.end();
             return;
         }
     });
